@@ -1,0 +1,95 @@
+.res IMAGE1
+.ubin
+.include "image1.png"
+
+.res IMAGE2
+.ubin
+.include "image2.png"
+
+.res IMAGE3
+.ubin
+.include "image3.png"
+
+.res IMAGE4
+.ubin
+.include "image4.png"
+
+.res IMAGE5
+.ubin
+.include "image5.png"
+
+.res IMAGE6
+.ubin
+.include "image6.png"
+
+.res IMAGE7
+.ubin
+.include "image1.png"
+
+.res IMAGE8
+.ubin
+.include "image2.png"
+
+.res IMAGE9
+.ubin
+.include "image3.png"
+
+.res IMAGE10
+.ubin
+.include "image4.png"
+
+.res IMAGE11
+.ubin
+.include "image5.png"
+
+.res IMAGE12
+.ubin
+.include "image6.png"
+
+.res IMAGE13
+.ubin
+.include "image1.png"
+
+.res IMAGE14
+.ubin
+.include "image2.png"
+
+.res IMAGE15
+.ubin
+.include "image3.png"
+
+.res IMAGE16
+.ubin
+.include "image4.png"
+
+.res IMAGE17
+.ubin
+.include "image5.png"
+
+.res IMAGE18
+.ubin
+.include "image6.png"
+
+.res IMAGE19
+.ubin
+.include "image1.png"
+
+.res IMAGE20
+.ubin
+.include "image2.png"
+
+.res IMAGE21
+.ubin
+.include "image3.png"
+
+.res IMAGE22
+.ubin
+.include "image4.png"
+
+.res IMAGE23
+.ubin
+.include "image5.png"
+
+.res IMAGE24
+.ubin
+.include "image6.png"
