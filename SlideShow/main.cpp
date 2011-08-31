@@ -30,6 +30,10 @@
  *
  * To keep this example simple, no scaling of the images is currently done.
  *
+ * The actual slides used in the example was done for a GTUG presentation
+ * in Stockholm, in February 10, 2011, and are now a bit out-dated. The
+ * SlideShow app developed for that presentation was programmed in Lua. :)
+ *
  * This example shows how to use a simple caching mechanism to load
  * and unload images, in order to prevent out-of-memory problems.
  *
