@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>How to communicate between JavaScript and C++ in MoSync</title>
+</head>
+<body style="width: 700px; font-family: sans-serif; font-size: 120%">
+
+<h1>How to communicate between JavaScript and C++ in MoSync</h1>
+<p>
+This document outlines how the bridge between JavaScript
+and C++ works in MoSync. Is is assumed you have read
+<a href="HTML5HowToCreateProject.html">
+How to create an HTML5 project in MoSync</a>.
+</p>
+
+<h2>How to invoke C++ code from JavaScript</h2>
+<p>
+The following assumes that you have created a project using the
+"HTML5/C++ Project" template.
+</p>
+<p>This is the JavaScript function in file index.html 
+that invokes C++ the code that makes the device vibrate:
+</p>
+<pre>
+/**
+ * Make device vibrate.
+ */
+function Vibrate()
+{
+    // This is how a message is passed to C++ when
+    // using the bridge library.
+    bridge.messagehandler.send({messageName: "Vibrate"}, null);
+}
+</pre>
+<p>And this is the C++ code in main.cpp that handles the message:</p>
+<pre>
+/**
+ * This method handles messages sent from the WebView.
+ * @param webView The WebView that sent the message.
+ * @param urlData Data object that holds message content.
+ * Note that the data object will be valid only during
+ * the life-time of the call of this method, then it
+ * will be deallocated.
+ */
+void handleWebViewMessage(WebView* webView, MAHandle urlData)
+{
+    // Create message object. This parses the message.
+    WebViewMessage message(webView, urlData);
+
+    if (message.is("Vibrate"))
+    {
+        // Make device vibrate for half a second.
+        // On iOS, the vibration length will be constant,
+        // regardless of the time parameter value.
+        maVibrate(500);
+    }
+
+    // Tell the WebView that we have processed the message, so that
+    // it can send the next one.
+    callJS("bridge.messagehandler.processedMessage()");
+}
+</pre>
+<p>
+The last line, which calls the JavaScript function 
+bridge.messagehandler.processedMessage(), is there to
+tell the JavaScript bridge that it can send the next message.
+This could have been called by code in the superclass
+WebAppMoblet, but in order to not copule WebAppMoblet
+to a particular JavaScript library, it is not done automatically.
+</p>
+<p>
+The function bridge.messagehandler.send() takes two parameters:
+</p>
+<pre>
+bridge.messagehandler.send(message, callbackFunction)
+</pre>
+The parameter "message" is a dictionary, which contains
+the message name and optionally other message parameters. 
+The parameter "callbackFunction" is a function that you can call
+from C++ to return a value to JavaScript. The communication
+mechanism is asynchronous, which is why a callback function is 
+used to pass the result back to JavaScript.
+<p>
+If you wish to pass parameters to C++, you add the
+parameter as a field in the message, for example:
+</p>
+<pre>
+bridge.messagehandler.send(
+    { messageName: "Vibrate"
+      duration: "1000" }, 
+    null);
+</pre>
+<p>
+In the C++ code, this is how you get the value of the message
+parameter:
+</p>
+<pre>
+void handleWebViewMessage(WebView* webView, MAHandle urlData)
+{
+    // Create message object. This parses the message.
+    WebViewMessage message(webView, urlData);
+
+    if (message.is("Vibrate"))
+    {
+        // Get the "duration" parameter as an int value
+        // and vibrate for that number of milliseconds.
+        int duration = message.getParamInt("duration");
+        maVibrate(duration);
+    }
+
+    // Tell the WebView that we have processed the message, so that
+    // it can send the next one.
+    callJS("bridge.messagehandler.processedMessage()");
+}
+</pre>
+<p>
+If you want to get the String value of a parameter, use the 
+getParam method of the message object.
+</p>
+
+<h2>How to call JavaScript code from C++</h2>
+
+<p>
+To evaluate JavaScript code in the WebView from C++, you can use
+the method WebAppMoblet::callJS(). Here is an example:
+</p>
+<pre>
+callJS("alert('Hello World')");
+</pre>
+<p>The following illustrates how to invoke C++ from JavaScript and 
+call a JavaScript callback function. Here the JavaScript part:
+<pre>
+bridge.messagehandler.send(
+    { messageName: "GetScreenSize" }, 
+    function(width, height) {
+        alert("Screen size: " + width + " " + height);
+    });
+</pre>
+<p>
+Here is the C++ part:
+</p>
+<pre>
+void handleWebViewMessage(WebView* webView, MAHandle urlData)
+{
+    WebViewMessage message(webView, urlData);
+    
+    if (message.is("GetScreenSize"))
+    {
+        // Call JavaScript reply handler for this message.
+        char script[512];
+        sprintf(
+            script,
+            "bridge.messagehandler.reply(%s, %d, %d)",
+            message.getParam("callbackId").c_str(),
+            EXTENT_X(maGetScrSize()),
+            EXTENT_Y(maGetScrSize()));
+        getWebView()->callJS(script);
+    }
+    
+    callJS("bridge.messagehandler.processedMessage()");
+}
+</pre>
+
+</body>
+</html>

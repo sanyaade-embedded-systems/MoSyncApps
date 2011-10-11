@@ -1,8 +1,10 @@
-MoSync Example Code
-===================
+MoSync Code
+===========
 
-This is a collection of example programs for [MoSync](http://mosync.com/), 
-a C/C++ cross-platform development system for mobile devices. 
+This is a collection of documents and programs related
+to [MoSync](http://mosync.com/). MoSync is a 
+cross-platform development system for mobile devices,
+based on C/C++ and HTML5.
 
 Contact
 -------
