@@ -30,9 +30,11 @@
 
 #include <MAUtil/Moblet.h>
 #include <EasyConnection/EasyHttpConnection.h>
+#include <YAJLDom/YAJLDom.h>
 
 // TODO: Enter the url that points to your service here.
-#define SERVICE_URL NULL
+//#define SERVICE_URL NULL
+#define SERVICE_URL "https://raw.github.com/divineprog/MoSyncApps/master/JsonServiceConsumerTemplate/sample.json"
 //#define SERVICE_URL "http://myserver.com/MyService"
 
 // Shorthand for printing/logging.
@@ -82,7 +84,15 @@ private:
 	 * Start the download of the Json data from the SERVICE_URL.
 	 * \return SUCCESS if successful, ERROR on error.
 	 */
+
 	int startDownloadJsonData();
+
+	/**
+	 * Traverse and print Json data.
+	 * TODO: Adapt this function to do whatever you wish to do
+	 * with your own data.
+	 */
+	int traverseJsonTree(MAUtil::YAJLDom::Value* root);
 
 private:
 	/**

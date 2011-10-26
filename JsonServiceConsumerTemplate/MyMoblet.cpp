@@ -33,9 +33,11 @@
  */
 
 #include <conprint.h>
+#include <YAJLDom/YAJLDom.h>
 #include "MyMoblet.h"
 
 using namespace MAUtil;
+using namespace MAUtil::YAJLDom;
 using namespace EasyConnection;
 
 /**
@@ -170,17 +172,71 @@ void MyMoblet::dataDownloaded(MAHandle data, int result)
 	// Check that we have a valid data handle.
 	if (data <= 0)
 	{
-		// TODO: Add error handling here.
 		LOG("Failed to download data - result: %d\n", result);
+		return;
 	}
 
-	// Proceed and parse the Json data.
-
-	// First get the Json data as a string.
+	// Get the Json data as a string.
 	String jsonData;
 	bool success = HandleToString(data, jsonData);
-	if (success)
+	if (!success)
 	{
-		LOG("Data downloaded size: %d\n", jsonData.size());
+		LOG("Failed to get string data\n");
+		return;
+	}
+
+	LOG("Data downloaded size: %d\n", jsonData.size());
+
+	// Parse Json data.
+	Value* root = YAJLDom::parse(
+		(const unsigned char*)jsonData.c_str(),
+		jsonData.size());
+
+	// Traverse the Json tree and print data.
+	traverseJsonTree(root);
+
+	// Delete Json tree.
+	deleteValue(root);
+}
+
+/**
+ * Traverse and print Json data.
+ * TODO: Adapt this function to do whatever you wish to do
+ * with your own data.
+ */
+int MyMoblet::traverseJsonTree(Value* root)
+{
+	// Check that the root is valid.
+	// The root type must be MAP for our data.
+	if (NULL == root
+		|| Value::NUL == root->getType()
+		|| Value::MAP != root->getType())
+	{
+		return ERROR;
+	}
+
+	// Traverse the Json tree and print values.
+	// The example data assumed by this code is in file:
+	// https://raw.github.com/divineprog/MoSyncApps/master/JsonServiceConsumerTemplate/sample.json
+	// TODO: Modify this code to do whatever you want to do with your own data.
+
+	// Get the people array.
+	Value* people = root->getValueForKey("people");
+	if (Value::NUL == people->getType()
+		|| Value::ARRAY != people->getType())
+	{
+		return ERROR;
+	}
+
+	// Iterate over the people array and print data.
+	for (int i = 0; i < people->getNumChildValues(); ++i)
+	{
+		Value* person = people->getValueByIndex(i);
+		Value* name = person->getValueForKey("name");
+		Value* company = person->getValueForKey("company");
+		LOG("name: %s company: %s\n",
+			name->toString().c_str(),
+			company->toString().c_str());
 	}
 }
+
