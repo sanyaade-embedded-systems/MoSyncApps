@@ -1,0 +1,14 @@
+{ "people" :
+	[{ 
+		"name": "Mikael Kindborg",
+		"company" : "MoSync"
+	},
+	{ 
+		"name": "Anders Malm",
+		"company" : "MoSync"
+	},
+	{ 
+		"name": "Patrick Broman",
+		"company" : "MoSync"
+	}]
+}
