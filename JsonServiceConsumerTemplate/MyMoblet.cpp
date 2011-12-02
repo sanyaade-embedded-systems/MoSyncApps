@@ -40,6 +40,48 @@ using namespace MAUtil;
 using namespace MAUtil::YAJLDom;
 using namespace EasyConnection;
 
+void TestParseJson()
+{
+	String jsonData =
+		"[{\"FirstName\":\"Thushara\",\"ID\":1,\"LastName\":\"Ratnayake\"},"
+		"{\"FirstName\":\"Wasantha\",\"ID\":2,\"LastName\":\"Kumara\"}]";
+
+	// Parse Json data.
+	Value* root = YAJLDom::parse(
+		(const unsigned char*)jsonData.c_str(),
+		jsonData.size());
+
+	// Traverse the Json tree and print data.
+
+	// Check that the root is valid.
+	// The root type should have type with above data ARRAY.
+	if (NULL == root
+		|| Value::NUL == root->getType()
+		|| Value::ARRAY != root->getType())
+	{
+		LOG("Root node is not valid\n");
+		return;
+	}
+
+	// Traverse the Json tree and print values.
+
+	// Iterate over the array and print data.
+	for (int i = 0; i < root->getNumChildValues(); ++i)
+	{
+		Value* person = root->getValueByIndex(i);
+		Value* firstName = person->getValueForKey("FirstName");
+		Value* lastName = person->getValueForKey("LastName");
+		Value* id = person->getValueForKey("ID");
+		LOG("%i %s %s\n",
+			id->toInt(),
+			lastName->toString().c_str(),
+			firstName->toString().c_str());
+	}
+
+	// Delete Json tree.
+	YAJLDom::deleteValue(root);
+}
+
 /**
  * Connection class for downloading data. Used for downloding Json data.
  * The downloaded data is passed on to the moblet. 
@@ -79,6 +121,8 @@ MyMoblet::MyMoblet()
 {
 	LOG("Application started\n");
 	LOG("Touch screen to start download\n");
+	TestParseJson();
+
 	if (NULL == SERVICE_URL)
 	{
 		maPanic(0, "You must edit MyMoblet.h and add a service url");
